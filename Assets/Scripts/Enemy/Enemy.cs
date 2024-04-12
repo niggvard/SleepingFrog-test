@@ -10,9 +10,10 @@ public class Enemy : MonoBehaviour
     [SerializeField] protected float attackCooldown;
 
     [Header("Settings")]
-    [SerializeField] private Animator animator;
+    [SerializeField] protected Animator animator;
     [SerializeField] protected Rigidbody2D body;
     [SerializeField] protected Collider2D enemyCollider;
+
     protected Transform point1, point2, attackPoint;
     protected SpriteRenderer spriteRenderer;
     protected float direction;
@@ -112,7 +113,8 @@ public class Enemy : MonoBehaviour
         {
             yield return new WaitForSeconds(attackCooldown / 2);
             animator.Play("PunchAnimation");
-            PlayerStats.player.HP--;
+            if (PlayerStats.player.canGetDamage)
+                PlayerStats.player.HP -= damage;
             yield return new WaitForSeconds(attackCooldown / 2);
             animator.Play("IdleAnimation");
         }
@@ -121,5 +123,10 @@ public class Enemy : MonoBehaviour
     protected virtual void OnDestroy()
     {
         StopAllCoroutines();
+    }
+
+    public void OnPlayerDeath()
+    {
+        Destroy(gameObject);
     }
 }
